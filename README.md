@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png" alt="BiliVBoard Logo" width="200">
+  <img src="https://cdn.jsdelivr.net/gh/moehans-official/BiliVBoard@main/logo.png" alt="BiliVBoard Logo" width="200">
 </p>
 
 <h1 align="center">BiliVBoard</h1>
