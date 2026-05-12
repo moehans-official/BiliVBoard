@@ -6,9 +6,9 @@
 
 BiliVBoard V3 包含三套评分算法，适配不同场景：
 
-- [V3 Radical 算法详情](./algorithms/V3_Radical.md)
-- [V3 Normal 算法详情](./algorithms/V3_Normal.md)
-- [V3 E SP 算法详情](./algorithms/V3_E_SP.md)
+- [V3 Radical 算法详情](./FORMULA/V3_Radical.md)
+- [V3 Normal 算法详情](./FORMULA/V3_Normal.md)
+- [V3 E SP 算法详情](./FORMULA/V3_E_SP.md)
 
 ---
 
