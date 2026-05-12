@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+venv/
+env/
+.env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Project specific
+DataCollector/covers/
+DataCollector/bilibili_video_data.xlsx
+*.tar.gz
+*.xlsx
+
+# MonkeyCode
+.monkeycode/
+.monkeycode-tmp-files/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
