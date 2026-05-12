@@ -54,8 +54,8 @@ python3 DataCollector/main.py
 
 ## 特别感谢
 
-- [BiliBoard Database](https://gitee.com/sembre/biliboard-database) - 数据支持与算法参考
+- [BiliBoard Database](https://gitee.com/sembre/biliboard-database) - 设计参考支持
 
 ## 声明
 
-本项目为独立开源项目，与 BiliBoard 项目制作组无任何关联。所有算法实现均基于公开数据模型，仅供学习研究使用。
+本项目为独立开源项目，与 BiliBoard 项目制作组无任何关联。
