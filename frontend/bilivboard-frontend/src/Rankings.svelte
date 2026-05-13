@@ -1,7 +1,9 @@
 <script>
+	import { onMount } from 'svelte';
+
+	let animatedScores = {};
 	let selectedItem = null;
 
-	// 占位数据，后续接入真实数据
 	let rankings = Array.from({ length: 20 }, (_, i) => {
 		const rate = (Math.random() * 40 - 10).toFixed(1);
 		const rankChange = Math.floor(Math.random() * 10) - 3;
@@ -11,7 +13,7 @@
 			title: `视频标题 ${i + 1} - 这是一个示例标题`,
 			author: `UP主 ${i + 1}`,
 			score: Math.floor(Math.random() * 100),
-			cover: `https://picsum.photos/320/180?random=${i + 1}`,
+			cover: `https://picsum.photos/640/360?random=${i + 1}`,
 			views: Math.floor(Math.random() * 1000000),
 			likes: Math.floor(Math.random() * 100000),
 			coins: Math.floor(Math.random() * 50000),
@@ -26,12 +28,34 @@
 		};
 	});
 
-	function openDetail(item) {
-		selectedItem = item;
-	}
+	onMount(() => {
+		rankings.forEach((item, index) => {
+			animatedScores[item.rank] = 0;
+			setTimeout(() => {
+				animateScore(item.rank, item.score);
+			}, index * 80);
+		});
+	});
 
-	function closeDetail() {
-		selectedItem = null;
+	function animateScore(rank, target) {
+		const duration = 800;
+		const steps = 24;
+		const increment = target / steps;
+		let current = 0;
+		let step = 0;
+
+		const timer = setInterval(() => {
+			step++;
+			current = Math.min(Math.round(increment * step), target);
+			animatedScores[rank] = current;
+			animatedScores = { ...animatedScores };
+
+			if (step >= steps) {
+				clearInterval(timer);
+				animatedScores[rank] = target;
+				animatedScores = { ...animatedScores };
+			}
+		}, duration / steps);
 	}
 
 	function formatNumber(num) {
@@ -40,31 +64,85 @@
 		}
 		return num.toLocaleString();
 	}
+
+	function openDetail(item) {
+		selectedItem = item;
+	}
+
+	function closeDetail() {
+		selectedItem = null;
+	}
+
+	function getRankClass(rank) {
+		if (rank === 1) return 'gold';
+		if (rank === 2) return 'silver';
+		if (rank === 3) return 'bronze';
+		return '';
+	}
 </script>
 
 <section class="ranking">
-	<h2>TOP 20</h2>
-	<div class="list">
-		{#each rankings as item}
-			<div class="card" on:click={() => openDetail(item)}>
-				<span class="rank">{item.rank}</span>
-				<img src={item.cover} alt={item.title} class="preview" />
+	<div class="section-header">
+		<h2>TOP 20</h2>
+		<span class="count">{rankings.length} 条目</span>
+	</div>
+	<div class="grid">
+		{#each rankings as item, index}
+			<div class="card" class:top3={item.rank <= 3} on:click={() => openDetail(item)}>
+				<div class="rank-badge {getRankClass(item.rank)}">
+					{#if item.rank <= 3}
+						<span class="rank-icon">★</span>
+					{/if}
+					<span class="rank-num">#{item.rank}</span>
+				</div>
+				<div class="cover-wrapper">
+					<img src={item.cover} alt={item.title} class="cover" />
+					<div class="score-overlay">
+						<span class="score">{animatedScores[item.rank] ?? 0}</span>
+					</div>
+				</div>
 				<div class="info">
 					<span class="title">{item.title}</span>
 					<span class="author">{item.author}</span>
 				</div>
-				<div class="right">
-					<span class="score">{item.score}</span>
-					<span class="rate" class:up={item.rate > 0} class:down={item.rate < 0}>
-						{item.rate > 0 ? '+' : ''}{item.rate}%
+				<div class="stats-row">
+					<span class="stat">
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+						{formatNumber(item.views)}
 					</span>
-					<span class="rank-change" class:up={item.rankChange > 0} class:down={item.rankChange < 0} class:same={item.rankChange === 0}>
+					<span class="stat">
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+						{formatNumber(item.likes)}
+					</span>
+					<span class="stat">
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.64c.1 1.7 1.36 2.66 2.73 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/></svg>
+						{formatNumber(item.coins)}
+					</span>
+					<span class="stat">
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+						{formatNumber(item.favorites)}
+					</span>
+				</div>
+				<div class="bottom-row">
+					<span class="rate-badge" class:up={item.rate > 0} class:down={item.rate < 0} class:zero={item.rate === 0}>
+						<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+							{#if item.rate > 0}
+								<path d="M7 14l5-5 5 5z"/>
+							{:else if item.rate < 0}
+								<path d="M7 10l5 5 5-5z"/>
+							{:else}
+								<path d="M5 11h14v2H5z"/>
+							{/if}
+						</svg>
+						<span class="rate-value">{item.rate > 0 ? '+' : ''}{item.rate}%</span>
+					</span>
+					<span class="rank-change-badge" class:up={item.rankChange > 0} class:down={item.rankChange < 0} class:same={item.rankChange === 0}>
 						{#if item.rankChange > 0}
 							↑{item.rankChange}
 						{:else if item.rankChange < 0}
 							↓{Math.abs(item.rankChange)}
 						{:else}
-							一
+							—
 						{/if}
 					</span>
 				</div>
@@ -76,50 +154,64 @@
 {#if selectedItem}
 	<div class="overlay" on:click={closeDetail}>
 		<div class="modal" on:click|stopPropagation>
-			<button class="close" on:click={closeDetail}>×</button>
-			<img src={selectedItem.cover} alt={selectedItem.title} class="cover" />
+			<button class="close" on:click={closeDetail}>
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<path d="M18 6L6 18M6 6l12 12"/>
+				</svg>
+			</button>
+			<img src={selectedItem.cover} alt={selectedItem.title} class="modal-cover" />
 			<div class="detail">
 				<h3>{selectedItem.title}</h3>
-				<p class="author">{selectedItem.author}</p>
-				<div class="stats">
-					<div class="stat">
-						<span class="label">播放</span>
-						<span class="value">{formatNumber(selectedItem.views)}</span>
+				<p class="modal-author">{selectedItem.author}</p>
+				<div class="stats-grid">
+					<div class="stat-item">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+						<span class="stat-value">{formatNumber(selectedItem.views)}</span>
+						<span class="stat-label">播放</span>
 					</div>
-					<div class="stat">
-						<span class="label">点赞</span>
-						<span class="value">{formatNumber(selectedItem.likes)}</span>
+					<div class="stat-item">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+						<span class="stat-value">{formatNumber(selectedItem.likes)}</span>
+						<span class="stat-label">点赞</span>
 					</div>
-					<div class="stat">
-						<span class="label">收藏</span>
-						<span class="value">{formatNumber(selectedItem.favorites)}</span>
+					<div class="stat-item">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.64c.1 1.7 1.36 2.66 2.73 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/></svg>
+						<span class="stat-value">{formatNumber(selectedItem.coins)}</span>
+						<span class="stat-label">投币</span>
 					</div>
-					<div class="stat">
-						<span class="label">转发</span>
-						<span class="value">{formatNumber(selectedItem.shares)}</span>
+					<div class="stat-item">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+						<span class="stat-value">{formatNumber(selectedItem.favorites)}</span>
+						<span class="stat-label">收藏</span>
 					</div>
-					<div class="stat">
-						<span class="label">弹幕</span>
-						<span class="value">{formatNumber(selectedItem.danmaku)}</span>
+					<div class="stat-item">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+						<span class="stat-value">{formatNumber(selectedItem.shares)}</span>
+						<span class="stat-label">转发</span>
+					</div>
+					<div class="stat-item">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+						<span class="stat-value">{formatNumber(selectedItem.danmaku)}</span>
+						<span class="stat-label">弹幕</span>
 					</div>
 				</div>
 				<div class="rank-info">
 					<div class="rank-item">
-						<span class="label">上次排名</span>
-						<span class="value">#{selectedItem.lastRank}</span>
+						<span class="rank-value">#{selectedItem.lastRank}</span>
+						<span class="rank-label">上次排名</span>
 					</div>
 					<div class="rank-item">
-						<span class="label">上榜次数</span>
-						<span class="value">{selectedItem.timesOnChart}次</span>
+						<span class="rank-value">{selectedItem.timesOnChart}</span>
+						<span class="rank-label">上榜次数</span>
 					</div>
 					<div class="rank-item">
-						<span class="label">上榜周数</span>
-						<span class="value">{selectedItem.weeksOnChart}周</span>
+						<span class="rank-value">{selectedItem.weeksOnChart}周</span>
+						<span class="rank-label">上榜周数</span>
 					</div>
 				</div>
 				<div class="final-score">
-					<span>综合评分</span>
-					<span class="score-value">{selectedItem.score}</span>
+					<span class="label">综合评分</span>
+					<span class="score-big">{selectedItem.score}</span>
 				</div>
 			</div>
 		</div>
@@ -128,117 +220,234 @@
 
 <style>
 	.ranking {
-		max-width: 800px;
-		margin: 0 auto;
+		background: #ffffff;
+		border-radius: 16px;
+		padding: 24px;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+	}
+
+	.section-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 20px;
 	}
 
 	h2 {
-		color: #111111;
-		font-size: 1.25rem;
-		margin: 0 0 24px 0;
-		font-weight: 500;
-		letter-spacing: 1px;
+		color: #1a1a2e;
+		font-size: 1.125rem;
+		margin: 0;
+		font-weight: 600;
+		letter-spacing: -0.01em;
 	}
 
-	.list {
-		display: flex;
-		flex-direction: column;
-		gap: 8px;
+	.count {
+		color: #8e8ea0;
+		font-size: 0.8125rem;
+	}
+
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+		gap: 20px;
 	}
 
 	.card {
-		display: flex;
-		align-items: center;
-		padding: 12px;
-		background-color: #ffffff;
-		border: 1px solid #eeeeee;
-		border-radius: 8px;
-		gap: 12px;
+		background-color: #fafafa;
+		border-radius: 16px;
+		overflow: hidden;
 		cursor: pointer;
-		transition: background-color 0.2s;
+		transition: all 0.2s ease;
+		animation: slideUp 0.4s ease-out backwards;
+		position: relative;
 	}
 
 	.card:hover {
-		background-color: #f8f8f8;
+		background-color: #f0f0f5;
+		transform: translateY(-2px);
+		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 	}
 
-	.rank {
-		width: 24px;
-		text-align: center;
-		color: #999999;
-		font-size: 0.875rem;
-		font-weight: 500;
+	.card.top3 {
+		background-color: #fffdf5;
 	}
 
-	.preview {
-		width: 80px;
-		height: 45px;
-		object-fit: cover;
-		border-radius: 4px;
+	.card.top3:hover {
+		background-color: #fff8e6;
 	}
 
-	.info {
-		flex: 1;
+	.rank-badge {
+		position: absolute;
+		top: 12px;
+		left: 12px;
+		background: rgba(255, 255, 255, 0.9);
+		backdrop-filter: blur(4px);
+		padding: 4px 10px;
+		border-radius: 8px;
 		display: flex;
-		flex-direction: column;
+		align-items: center;
 		gap: 4px;
-		min-width: 0;
+		z-index: 1;
 	}
 
-	.title {
-		color: #111111;
-		font-size: 0.875rem;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+	.rank-badge.gold {
+		background: linear-gradient(135deg, #fbbf24, #f59e0b);
+		color: #fff;
 	}
 
-	.author {
-		color: #999999;
+	.rank-badge.silver {
+		background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+		color: #fff;
+	}
+
+	.rank-badge.bronze {
+		background: linear-gradient(135deg, #f59e0b, #d97706);
+		color: #fff;
+	}
+
+	.rank-icon {
+		font-size: 0.625rem;
+	}
+
+	.rank-num {
 		font-size: 0.75rem;
-	}
-
-	.right {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-end;
-		gap: 4px;
-	}
-
-	.score {
-		color: #111111;
-		font-size: 1rem;
 		font-weight: 600;
 	}
 
-	.rate {
-		font-size: 0.75rem;
+	.cover-wrapper {
+		position: relative;
+		width: 100%;
+		aspect-ratio: 16 / 9;
+		overflow: hidden;
+	}
+
+	.cover {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform 0.3s ease;
+	}
+
+	.card:hover .cover {
+		transform: scale(1.05);
+	}
+
+	.score-overlay {
+		position: absolute;
+		bottom: 12px;
+		right: 12px;
+		background: rgba(0, 0, 0, 0.75);
+		backdrop-filter: blur(4px);
+		color: #fff;
+		padding: 5px 12px;
+		border-radius: 8px;
+		font-size: 1.25rem;
+		font-weight: 800;
+		font-variant-numeric: tabular-nums;
+		letter-spacing: -0.02em;
+	}
+
+	.info {
+		padding: 14px 16px 8px;
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.title {
+		color: #1a1a2e;
+		font-size: 0.9375rem;
 		font-weight: 500;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		line-height: 1.4;
 	}
 
-	.rate.up {
-		color: #22c55e;
+	.author {
+		color: #a0a0b0;
+		font-size: 0.8125rem;
 	}
 
-	.rate.down {
-		color: #ef4444;
+	.stats-row {
+		display: flex;
+		gap: 16px;
+		padding: 8px 16px;
 	}
 
-	.rank-change {
+	.stat {
+		display: flex;
+		align-items: center;
+		gap: 5px;
+		color: #1a1a2e;
+		font-size: 0.8125rem;
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.stat svg {
+		color: #a0a0b0;
+		flex-shrink: 0;
+	}
+
+	.bottom-row {
+		display: flex;
+		justify-content: flex-end;
+		gap: 8px;
+		padding: 4px 16px 14px;
+		align-items: center;
+	}
+
+	.rate-badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 3px;
+		padding: 3px 8px;
+		border-radius: 6px;
 		font-size: 0.75rem;
-		font-weight: 500;
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+		letter-spacing: -0.01em;
 	}
 
-	.rank-change.up {
-		color: #22c55e;
+	.rate-badge.up {
+		background: #dcfce7;
+		color: #15803d;
 	}
 
-	.rank-change.down {
-		color: #ef4444;
+	.rate-badge.down {
+		background: #fee2e2;
+		color: #b91c1c;
 	}
 
-	.rank-change.same {
-		color: #999999;
+	.rate-badge.zero {
+		background: #f1f5f9;
+		color: #64748b;
+	}
+
+	.rank-change-badge {
+		display: inline-flex;
+		align-items: center;
+		padding: 3px 8px;
+		border-radius: 6px;
+		font-size: 0.75rem;
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.rank-change-badge.up {
+		background: #dcfce7;
+		color: #15803d;
+	}
+
+	.rank-change-badge.down {
+		background: #fee2e2;
+		color: #b91c1c;
+	}
+
+	.rank-change-badge.same {
+		background: #f1f5f9;
+		color: #94a3b8;
 	}
 
 	/* Modal */
@@ -248,129 +457,281 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background-color: rgba(0, 0, 0, 0.5);
+		background-color: rgba(0, 0, 0, 0.6);
+		backdrop-filter: blur(4px);
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		z-index: 1000;
 		padding: 16px;
+		animation: fadeIn 0.2s ease-out;
 	}
 
 	.modal {
 		background-color: #ffffff;
-		border-radius: 12px;
+		border-radius: 20px;
 		max-width: 480px;
 		width: 100%;
 		overflow: hidden;
 		position: relative;
+		animation: scaleIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+		box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 	}
 
 	.close {
 		position: absolute;
 		top: 12px;
 		right: 12px;
-		background: rgba(0, 0, 0, 0.5);
-		color: #ffffff;
+		background: rgba(255, 255, 255, 0.9);
+		color: #1a1a2e;
 		border: none;
 		width: 32px;
 		height: 32px;
 		border-radius: 50%;
-		font-size: 1.25rem;
 		cursor: pointer;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		z-index: 1;
+		transition: all 0.2s ease;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 	}
 
-	.cover {
+	.close:hover {
+		transform: scale(1.1) rotate(90deg);
+		background: #ffffff;
+	}
+
+	.modal-cover {
 		width: 100%;
 		aspect-ratio: 16 / 9;
 		object-fit: cover;
 	}
 
 	.detail {
-		padding: 20px;
+		padding: 24px;
 	}
 
 	.detail h3 {
-		color: #111111;
-		font-size: 1rem;
+		color: #1a1a2e;
+		font-size: 1.0625rem;
 		margin: 0 0 4px 0;
-		font-weight: 500;
+		font-weight: 600;
+		line-height: 1.4;
 	}
 
-	.detail .author {
-		color: #666666;
+	.modal-author {
+		color: #8e8ea0;
 		font-size: 0.875rem;
 		margin: 0 0 20px 0;
 	}
 
-	.stats {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 16px;
+	.stats-grid {
+		display: grid;
+		grid-template-columns: repeat(5, 1fr);
+		gap: 12px;
 		margin-bottom: 20px;
+		padding-bottom: 20px;
+		border-bottom: 1px solid #f0f0f5;
 	}
 
-	.stat {
+	.stat-item {
+		text-align: center;
 		display: flex;
 		flex-direction: column;
-		gap: 2px;
-	}
-
-	.stat .label {
-		color: #999999;
-		font-size: 0.75rem;
-	}
-
-	.stat .value {
-		color: #111111;
-		font-size: 0.875rem;
-		font-weight: 500;
-	}
-
-	.rank-info {
-		display: flex;
-		gap: 24px;
-		padding: 16px 0;
-		margin-bottom: 16px;
-		border-top: 1px solid #eeeeee;
-		border-bottom: 1px solid #eeeeee;
-	}
-
-	.rank-item {
-		display: flex;
-		flex-direction: column;
+		align-items: center;
 		gap: 4px;
 	}
 
-	.rank-item .label {
-		color: #999999;
-		font-size: 0.75rem;
+	.stat-item svg {
+		color: #a0a0b0;
 	}
 
-	.rank-item .value {
-		color: #111111;
-		font-size: 0.875rem;
-		font-weight: 500;
+	.stat-value {
+		color: #1a1a2e;
+		font-size: 0.9375rem;
+		font-weight: 800;
+		font-variant-numeric: tabular-nums;
+		letter-spacing: -0.01em;
+	}
+
+	.stat-label {
+		color: #a0a0b0;
+		font-size: 0.6875rem;
+	}
+
+	.rank-info {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 12px;
+		padding-bottom: 20px;
+		margin-bottom: 20px;
+		border-bottom: 1px solid #f0f0f5;
+	}
+
+	.rank-item {
+		text-align: center;
+	}
+
+	.rank-value {
+		display: block;
+		color: #1a1a2e;
+		font-size: 1.0625rem;
+		font-weight: 800;
+		font-variant-numeric: tabular-nums;
+		letter-spacing: -0.01em;
+		margin-bottom: 2px;
+	}
+
+	.rank-label {
+		color: #a0a0b0;
+		font-size: 0.6875rem;
 	}
 
 	.final-score {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding-top: 16px;
 	}
 
-	.final-score span:first-child {
-		color: #666666;
+	.final-score .label {
+		color: #8e8ea0;
 		font-size: 0.875rem;
 	}
 
-	.score-value {
-		color: #111111;
-		font-size: 1.5rem;
-		font-weight: 600;
+	.score-big {
+		color: #1a1a2e;
+		font-size: 2.25rem;
+		font-weight: 800;
+		font-variant-numeric: tabular-nums;
+		letter-spacing: -0.03em;
+	}
+
+	@media (max-width: 640px) {
+		.ranking {
+			padding: 16px;
+			border-radius: 12px;
+		}
+
+		.grid {
+			grid-template-columns: 1fr;
+			gap: 16px;
+		}
+
+		.card {
+			border-radius: 12px;
+		}
+
+		.info {
+			padding: 12px 14px 6px;
+		}
+
+		.title {
+			font-size: 0.875rem;
+		}
+
+		.author {
+			font-size: 0.75rem;
+		}
+
+		.stats-row {
+			gap: 12px;
+			padding: 6px 14px;
+		}
+
+		.stat {
+			font-size: 0.75rem;
+		}
+
+		.stat svg {
+			width: 12px;
+			height: 12px;
+		}
+
+		.bottom-row {
+			padding: 6px 14px 12px;
+		}
+
+		.rate-badge, .rank-change-badge {
+			font-size: 0.6875rem;
+			padding: 2px 6px;
+		}
+
+		.score-overlay {
+			font-size: 0.9375rem;
+			padding: 3px 8px;
+		}
+
+		.rank-badge {
+			padding: 3px 8px;
+		}
+
+		.rank-num {
+			font-size: 0.6875rem;
+		}
+
+		.modal {
+			max-width: 100%;
+			border-radius: 16px 16px 0 0;
+			max-height: 90vh;
+			overflow-y: auto;
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			right: 0;
+		}
+
+		.close {
+			top: 8px;
+			right: 8px;
+			width: 28px;
+			height: 28px;
+		}
+
+		.detail {
+			padding: 16px;
+		}
+
+		.detail h3 {
+			font-size: 0.9375rem;
+		}
+
+		.stats-grid {
+			grid-template-columns: repeat(3, 1fr);
+			gap: 8px;
+			padding-bottom: 16px;
+			margin-bottom: 16px;
+		}
+
+		.stat-item:nth-child(4),
+		.stat-item:nth-child(5) {
+			grid-column: auto;
+		}
+
+		.stat-value {
+			font-size: 0.8125rem;
+		}
+
+		.stat-label {
+			font-size: 0.625rem;
+		}
+
+		.rank-info {
+			gap: 8px;
+			padding-bottom: 16px;
+			margin-bottom: 16px;
+		}
+
+		.rank-value {
+			font-size: 0.875rem;
+		}
+
+		.rank-label {
+			font-size: 0.625rem;
+		}
+
+		.score-big {
+			font-size: 1.5rem;
+		}
 	}
 </style>
