@@ -1,33 +1,27 @@
 # Python
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
-
-# Virtual environments
+*.pyc
+*.pyo
+.env
 venv/
-env/
-.env/
 
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
+# Node
+node_modules/
+.svelte-kit/
+dist/
 
-# Project specific
-DataCollector/covers/
-DataCollector/bilibili_video_data.xlsx
-*.tar.gz
+# Data files
+*.db
 *.xlsx
+songs.json
+songs.jsonl
 
-# MonkeyCode
-.monkeycode/
-.monkeycode-tmp-files/
+# Covers
+DataCollector/covers/
+
+# Test files
+test_crawl*.py
+crawl_songs.py
 
 # Logs
 *.log
-
-# Temporary files
-*.tmp
-*.temp

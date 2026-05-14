@@ -79,13 +79,6 @@
 		if (rank === 3) return 'bronze';
 		return '';
 	}
-
-	function getRankIcon(rank) {
-		if (rank === 1) return 'I';
-		if (rank === 2) return 'II';
-		if (rank === 3) return 'III';
-		return null;
-	}
 </script>
 
 <section class="ranking">
@@ -103,11 +96,7 @@
 					<img src={item.cover} alt={item.title} class="cover" />
 					<div class="cover-overlay" />
 					<div class="rank-badge {getRankClass(item.rank)}">
-						{#if item.rank <= 3}
-							<span class="rank-icon">{getRankIcon(item.rank)}</span>
-						{:else}
-							<span class="rank-num">{item.rank}</span>
-						{/if}
+						<span class="rank-num">#{item.rank}</span>
 					</div>
 					<div class="score-overlay">
 						<span class="score">{animatedScores[item.rank] ?? 0}</span>
@@ -120,43 +109,42 @@
 					</div>
 					<div class="stats-row">
 						<span class="stat">
-							<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+							<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
 							{formatNumber(item.views)}
 						</span>
 						<span class="stat">
-							<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+							<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10h10"/><path d="M7 14h6"/><path d="M12 18H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6"/><path d="M22 18H12a2 2 0 0 0-2 2v0a2 2 0 0 0 2 2h10"/></svg>
 							{formatNumber(item.likes)}
 						</span>
 						<span class="stat">
-							<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.64c.1 1.7 1.36 2.66 2.73 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/></svg>
+							<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v12"/><path d="M15 9.5a3 3 0 0 0-6 0"/></svg>
 							{formatNumber(item.coins)}
 						</span>
 						<span class="stat">
-							<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+							<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
 							{formatNumber(item.favorites)}
 						</span>
 					</div>
 					<div class="bottom-row">
 						<span class="rate-badge" class:up={item.rate > 0} class:down={item.rate < 0} class:zero={item.rate === 0}>
-							<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
-								{#if item.rate > 0}
-									<path d="M7 14l5-5 5 5z"/>
-								{:else if item.rate < 0}
-									<path d="M7 10l5 5 5-5z"/>
-								{:else}
-									<path d="M5 11h14v2H5z"/>
-								{/if}
-							</svg>
+							{#if item.rate > 0}
+								<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+							{:else if item.rate < 0}
+								<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+							{:else}
+								<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+							{/if}
 							<span class="rate-value">{item.rate > 0 ? '+' : ''}{item.rate}%</span>
 						</span>
 						<span class="rank-change-badge" class:up={item.rankChange > 0} class:down={item.rankChange < 0} class:same={item.rankChange === 0}>
 							{#if item.rankChange > 0}
-								↑{item.rankChange}
+								<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
 							{:else if item.rankChange < 0}
-								↓{Math.abs(item.rankChange)}
+								<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
 							{:else}
-								—
+								<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
 							{/if}
+							{Math.abs(item.rankChange)}
 						</span>
 					</div>
 				</div>
@@ -169,9 +157,7 @@
 	<div class="overlay" on:click={closeDetail}>
 		<div class="modal" on:click|stopPropagation>
 			<button class="close" on:click={closeDetail}>
-				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-					<path d="M18 6L6 18M6 6l12 12"/>
-				</svg>
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
 			</button>
 			<div class="modal-cover-wrapper">
 				<img src={selectedItem.cover} alt={selectedItem.title} class="modal-cover" />
@@ -185,43 +171,43 @@
 				<p class="modal-author">{selectedItem.author}</p>
 				<div class="stats-grid">
 					<div class="stat-item">
-						<div class="stat-icon play">
-							<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+						<div class="stat-icon">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
 						</div>
 						<span class="stat-value">{formatNumber(selectedItem.views)}</span>
 						<span class="stat-label">播放</span>
 					</div>
 					<div class="stat-item">
-						<div class="stat-icon like">
-							<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+						<div class="stat-icon">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10h10"/><path d="M7 14h6"/><path d="M12 18H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6"/><path d="M22 18H12a2 2 0 0 0-2 2v0a2 2 0 0 0 2 2h10"/></svg>
 						</div>
 						<span class="stat-value">{formatNumber(selectedItem.likes)}</span>
 						<span class="stat-label">点赞</span>
 					</div>
 					<div class="stat-item">
-						<div class="stat-icon coin">
-							<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.64c.1 1.7 1.36 2.66 2.73 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/></svg>
+						<div class="stat-icon">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v12"/><path d="M15 9.5a3 3 0 0 0-6 0"/></svg>
 						</div>
 						<span class="stat-value">{formatNumber(selectedItem.coins)}</span>
 						<span class="stat-label">投币</span>
 					</div>
 					<div class="stat-item">
-						<div class="stat-icon fav">
-							<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+						<div class="stat-icon">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
 						</div>
 						<span class="stat-value">{formatNumber(selectedItem.favorites)}</span>
 						<span class="stat-label">收藏</span>
 					</div>
 					<div class="stat-item">
-						<div class="stat-icon share">
-							<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+						<div class="stat-icon">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 8h.01"/><path d="M6 6h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z"/><path d="M6 6V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"/></svg>
 						</div>
 						<span class="stat-value">{formatNumber(selectedItem.shares)}</span>
 						<span class="stat-label">转发</span>
 					</div>
 					<div class="stat-item">
-						<div class="stat-icon danmaku">
-							<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+						<div class="stat-icon">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
 						</div>
 						<span class="stat-value">{formatNumber(selectedItem.danmaku)}</span>
 						<span class="stat-label">弹幕</span>
@@ -311,7 +297,7 @@
 	}
 
 	.card.top3 {
-		background-color: #fafafa;
+		background-color: #f5f5f5;
 	}
 
 	.card.top3:hover {
@@ -371,13 +357,6 @@
 	.rank-badge.bronze {
 		background: rgba(160, 160, 176, 0.85);
 		color: #fff;
-	}
-
-	.rank-icon {
-		font-size: 0.75rem;
-		font-weight: 700;
-		letter-spacing: 0.05em;
-		line-height: 1;
 	}
 
 	.rank-num {
@@ -490,6 +469,7 @@
 	.rank-change-badge {
 		display: inline-flex;
 		align-items: center;
+		gap: 3px;
 		padding: 4px 10px;
 		border-radius: 8px;
 		font-size: 0.75rem;
@@ -655,16 +635,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		color: #fff;
-		background: #1a1a2e;
-	}
-
-	.stat-icon.play,
-	.stat-icon.like,
-	.stat-icon.coin,
-	.stat-icon.fav,
-	.stat-icon.share,
-	.stat-icon.danmaku {
+		color: #ffffff;
 		background: #1a1a2e;
 	}
 
@@ -764,6 +735,11 @@
 		.rate-badge, .rank-change-badge {
 			font-size: 0.6875rem;
 			padding: 3px 7px;
+		}
+
+		.rate-badge svg, .rank-change-badge svg {
+			width: 9px;
+			height: 9px;
 		}
 
 		.score-overlay {

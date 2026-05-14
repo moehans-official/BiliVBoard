@@ -11,11 +11,7 @@
 	<div class="hero-card">
 		<div class="hero-header">
 			<div class="hero-icon">
-				<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-					<circle cx="12" cy="12" r="10"/>
-					<path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-					<circle cx="12" cy="17" r="0.5" fill="currentColor"/>
-				</svg>
+				<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
 			</div>
 			<div class="hero-text">
 				<h2>关于 BiliVBoard</h2>
@@ -64,9 +60,7 @@
 							<span class="algo-subtitle">{algo.subtitle}</span>
 						</div>
 						<span class="chevron" class:open={formulasOpen[i]}>
-							<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-								<polyline points="6 9 12 15 18 9"/>
-							</svg>
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
 						</span>
 					</button>
 					{#if formulasOpen[i]}
@@ -75,7 +69,7 @@
 							<pre class="formula">{algo.formula}</pre>
 							<div class="algo-meta">
 								<span class="half-life">
-									<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+									<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
 									{algo.halfLife}
 								</span>
 							</div>
@@ -93,9 +87,7 @@
 		<div class="contact-links">
 			<a href="https://github.com/moehans-official/BiliVBoard" target="_blank" rel="noopener" class="contact-link">
 				<div class="contact-icon github">
-					<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-						<path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 2.951 1.111 1.511-1.378 3.422-2.001 5.003-2.001 1.455 0 2.987.13 4.443.384-.078-.749-.557-1.405-1.194-1.917.75-.085 1.522-.116 2.219-.116 3.153 0 5.008 2.422 5.008 5.678 0 4.065-2.604 7.536-6.208 8.095.529.455.964 1.298.964 2.556 0 1.842-.015 3.327-.015 3.781 0 .319.194.695.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-					</svg>
+					<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 2.183-.322 1.176 0 2.37.302 2.37.302 1.315.302 1.58 1.62 1.58 1.62 1.005 2.72 2.62 1.95 3.26 1.49.093-.725.395-1.95.715-2.405-2.51-.285-5.155-1.255-5.155-5.585 0-1.23.44-2.235 1.155-3.025-.115-.285-.5-1.435.11-2.99 0 0 .88-.28 2.88-2.88 1.365-.38 2.85-.38 4.215 0 1.995 2.6 2.865 2.88 2.865 2.88.615 1.555.225 2.705.11 2.99.72.79 1.155 1.795 1.155 3.025 0 4.34-2.65 5.3-5.16 5.58.405.35.765 1.045.765 2.11 0 1.525-.015 2.755-.015 3.13 0 .32.225.695.825.577C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
 				</div>
 				<span>GitHub</span>
 			</a>
