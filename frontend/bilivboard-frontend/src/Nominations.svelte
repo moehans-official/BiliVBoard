@@ -180,7 +180,7 @@
 		width: 48px;
 		height: 48px;
 		border-radius: 14px;
-		background: linear-gradient(135deg, #667eea, #764ba2);
+		background: #1a1a2e;
 		color: #ffffff;
 		display: flex;
 		align-items: center;
@@ -235,7 +235,7 @@
 	}
 
 	.input-wrapper:focus-within .input-icon {
-		color: #6750a4;
+		color: #1a1a2e;
 	}
 
 	.bvid-input {
@@ -252,8 +252,8 @@
 
 	.bvid-input:focus {
 		background: #ffffff;
-		border-color: #6750a4;
-		box-shadow: 0 0 0 3px rgba(103, 80, 164, 0.08);
+		border-color: #1a1a2e;
+		box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
 	}
 
 	.captcha-row {
@@ -281,8 +281,8 @@
 
 	.captcha-input:focus {
 		background: #ffffff;
-		border-color: #6750a4;
-		box-shadow: 0 0 0 3px rgba(103, 80, 164, 0.08);
+		border-color: #1a1a2e;
+		box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
 	}
 
 	#captcha-canvas {
@@ -319,7 +319,7 @@
 	.submit-btn {
 		width: 100%;
 		padding: 14px;
-		background: linear-gradient(135deg, #6750a4, #9a85c4);
+		background: #1a1a2e;
 		color: #ffffff;
 		border: none;
 		border-radius: 12px;
@@ -332,13 +332,13 @@
 		align-items: center;
 		justify-content: center;
 		gap: 8px;
-		box-shadow: 0 2px 8px rgba(103, 80, 164, 0.2);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 	}
 
 	.submit-btn:hover {
-		background: linear-gradient(135deg, #5a4494, #8a75b4);
+		background: #2d2d44;
 		transform: translateY(-2px);
-		box-shadow: 0 6px 16px rgba(103, 80, 164, 0.3);
+		box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 	}
 
 	.submit-btn:active {
@@ -351,8 +351,8 @@
 		justify-content: center;
 		gap: 12px;
 		padding: 24px;
-		color: #15803d;
-		background: linear-gradient(135deg, #dcfce7, #d1fae5);
+		color: #2e7d32;
+		background: #e8f5e9;
 		border-radius: 14px;
 		font-size: 0.9375rem;
 		font-weight: 600;

@@ -38,32 +38,29 @@
 					subtitle: '普通版',
 					desc: '基础热度 × 互动增强 × 时间衰减 × 放大系数',
 					formula: 'Score = 10000 + ln(P+1) × (1 + 0.3×ln(C+1)) × (1 + 1.5×I_rate) × e^(-T/30) × 800',
-					halfLife: '半衰期约 20.79 天',
-					gradient: 'from-blue-500 to-purple-500'
+					halfLife: '半衰期约 20.79 天'
 				},
 				{
 					name: 'V3 Radical',
 					subtitle: '激进版',
 					desc: '更短的半衰期，更强的互动权重',
 					formula: 'Score = 10000 + ln(P+1) × (1 + 3×I_rate) × e^(-T/10) × 500',
-					halfLife: '半衰期约 6.93 天',
-					gradient: 'from-orange-500 to-red-500'
+					halfLife: '半衰期约 6.93 天'
 				},
 				{
 					name: 'V3 E SP',
 					subtitle: '无时间衰减版',
 					desc: '去掉时间衰减因子，适用于长期评估',
 					formula: 'Score = 10000 + ln(P+1) × (1 + 0.3×ln(C+1)) × (1 + 1.5×I_rate) × 800',
-					halfLife: '无时间衰减',
-					gradient: 'from-emerald-500 to-teal-500'
+					halfLife: '无时间衰减'
 				}
 			] as algo, i}
 				<div class="algo-item">
 					<button class="algo-header" on:click={() => toggleFormula(i)}>
 						<div class="algo-info">
-							<div class="algo-badge" class={algo.gradient}>
-								{algo.name}
-							</div>
+						<div class="algo-badge">
+							{algo.name}
+						</div>
 							<span class="algo-subtitle">{algo.subtitle}</span>
 						</div>
 						<span class="chevron" class:open={formulasOpen[i]}>
@@ -137,7 +134,7 @@
 	}
 
 	.hero-card {
-		background: linear-gradient(135deg, #6750a4, #9a85c4);
+		background: #1a1a2e;
 		border-radius: 20px;
 		padding: 32px;
 		color: #ffffff;
@@ -259,11 +256,8 @@
 		color: #ffffff;
 		padding: 3px 10px;
 		border-radius: 6px;
+		background: #1a1a2e;
 	}
-
-	.algo-badge.from-blue-500 { background: linear-gradient(135deg, #3b82f6, #6366f1); }
-	.algo-badge.from-orange-500 { background: linear-gradient(135deg, #f97316, #ef4444); }
-	.algo-badge.from-emerald-500 { background: linear-gradient(135deg, #10b981, #14b8a6); }
 
 	.algo-subtitle {
 		color: #8e8ea0;
@@ -366,7 +360,7 @@
 	}
 
 	.contact-icon.email {
-		background: linear-gradient(135deg, #f97316, #ef4444);
+		background: #1a1a2e;
 		color: #ffffff;
 	}
 

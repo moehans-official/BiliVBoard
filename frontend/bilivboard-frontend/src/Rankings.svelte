@@ -81,9 +81,9 @@
 	}
 
 	function getRankIcon(rank) {
-		if (rank === 1) return '👑';
-		if (rank === 2) return '🥈';
-		if (rank === 3) return '🥉';
+		if (rank === 1) return 'I';
+		if (rank === 2) return 'II';
+		if (rank === 3) return 'III';
 		return null;
 	}
 </script>
@@ -106,7 +106,7 @@
 						{#if item.rank <= 3}
 							<span class="rank-icon">{getRankIcon(item.rank)}</span>
 						{:else}
-							<span class="rank-num">#{item.rank}</span>
+							<span class="rank-num">{item.rank}</span>
 						{/if}
 					</div>
 					<div class="score-overlay">
@@ -311,13 +311,11 @@
 	}
 
 	.card.top3 {
-		background-color: #fffdf7;
-		border-color: rgba(245, 158, 11, 0.12);
+		background-color: #fafafa;
 	}
 
 	.card.top3:hover {
-		border-color: rgba(245, 158, 11, 0.2);
-		box-shadow: 0 12px 28px rgba(245, 158, 11, 0.1), 0 4px 12px rgba(0, 0, 0, 0.04);
+		box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.05);
 	}
 
 	.cover-wrapper {
@@ -361,25 +359,24 @@
 	}
 
 	.rank-badge.gold {
-		background: linear-gradient(135deg, #fbbf24, #f59e0b);
+		background: rgba(26, 26, 46, 0.85);
 		color: #fff;
-		box-shadow: 0 3px 12px rgba(245, 158, 11, 0.3);
 	}
 
 	.rank-badge.silver {
-		background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+		background: rgba(100, 100, 120, 0.85);
 		color: #fff;
-		box-shadow: 0 3px 12px rgba(148, 163, 184, 0.3);
 	}
 
 	.rank-badge.bronze {
-		background: linear-gradient(135deg, #f59e0b, #d97706);
+		background: rgba(160, 160, 176, 0.85);
 		color: #fff;
-		box-shadow: 0 3px 12px rgba(217, 119, 6, 0.3);
 	}
 
 	.rank-icon {
-		font-size: 0.875rem;
+		font-size: 0.75rem;
+		font-weight: 700;
+		letter-spacing: 0.05em;
 		line-height: 1;
 	}
 
@@ -476,13 +473,13 @@
 	}
 
 	.rate-badge.up {
-		background: linear-gradient(135deg, #dcfce7, #d1fae5);
-		color: #15803d;
+		background: #e8f5e9;
+		color: #2e7d32;
 	}
 
 	.rate-badge.down {
-		background: linear-gradient(135deg, #fee2e2, #fecaca);
-		color: #b91c1c;
+		background: #ffebee;
+		color: #c62828;
 	}
 
 	.rate-badge.zero {
@@ -502,13 +499,13 @@
 	}
 
 	.rank-change-badge.up {
-		background: linear-gradient(135deg, #dcfce7, #d1fae5);
-		color: #15803d;
+		background: #e8f5e9;
+		color: #2e7d32;
 	}
 
 	.rank-change-badge.down {
-		background: linear-gradient(135deg, #fee2e2, #fecaca);
-		color: #b91c1c;
+		background: #ffebee;
+		color: #c62828;
 	}
 
 	.rank-change-badge.same {
@@ -659,30 +656,16 @@
 		align-items: center;
 		justify-content: center;
 		color: #fff;
+		background: #1a1a2e;
 	}
 
-	.stat-icon.play {
-		background: linear-gradient(135deg, #667eea, #764ba2);
-	}
-
-	.stat-icon.like {
-		background: linear-gradient(135deg, #f093fb, #f5576c);
-	}
-
-	.stat-icon.coin {
-		background: linear-gradient(135deg, #4facfe, #00f2fe);
-	}
-
-	.stat-icon.fav {
-		background: linear-gradient(135deg, #fbbf24, #f59e0b);
-	}
-
-	.stat-icon.share {
-		background: linear-gradient(135deg, #a8edea, #4facfe);
-	}
-
+	.stat-icon.play,
+	.stat-icon.like,
+	.stat-icon.coin,
+	.stat-icon.fav,
+	.stat-icon.share,
 	.stat-icon.danmaku {
-		background: linear-gradient(135deg, #e0c3fc, #8ec5fc);
+		background: #1a1a2e;
 	}
 
 	.stat-value {

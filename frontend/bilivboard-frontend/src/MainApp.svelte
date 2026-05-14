@@ -96,7 +96,7 @@
 		position: absolute;
 		inset: -4px;
 		border-radius: 20px;
-		background: linear-gradient(135deg, rgba(103, 80, 164, 0.08), rgba(103, 80, 164, 0));
+		background: rgba(0, 0, 0, 0.04);
 		transition: opacity 0.3s ease;
 		opacity: 0;
 	}
@@ -125,10 +125,6 @@
 		color: #1a1a2e;
 		letter-spacing: -0.03em;
 		margin: 0 0 4px;
-		background: linear-gradient(135deg, #1a1a2e 0%, #4a4a6a 100%);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-clip: text;
 	}
 
 	.tagline {
@@ -180,7 +176,7 @@
 	nav button.active {
 		background-color: #1a1a2e;
 		color: #ffffff;
-		box-shadow: 0 3px 10px rgba(26, 26, 46, 0.2);
+		box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
 	}
 
 	.content {
