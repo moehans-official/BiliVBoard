@@ -1,9 +1,13 @@
 <script>
+  import { onMount } from 'svelte';
+
   let formulasOpen = $state([true, false, false]);
+  let formulaEls = $state([]);
 
   function toggleFormula(index) {
     formulasOpen[index] = !formulasOpen[index];
     formulasOpen = [...formulasOpen];
+    setTimeout(() => renderFormulas(), 0);
   }
 
   const algorithms = [
@@ -11,11 +15,11 @@
       name: 'V3 Normal',
       subtitle: '普通版',
       desc: '综合考虑播放量、互动率和时间因素，适合日常排行参考',
-      formula: 'Score = 10000 + ln(P+1) × (1 + 0.3×ln(C+1)) × (1 + 1.5×I_rate) × e^(-T/30) × 800',
+      formula: '\\text{Score} = 10000 + \\ln(P+1) \\times (1 + 0.3 \\cdot \\ln(C+1)) \\times (1 + 1.5 \\cdot I_{\\text{rate}}) \\times e^{-T/30} \\times 800',
       vars: [
         { sym: 'P', desc: '播放量' },
         { sym: 'C', desc: '投币数' },
-        { sym: 'I_rate', desc: '综合互动率' },
+        { sym: 'I_{\\text{rate}}', desc: '综合互动率' },
         { sym: 'T', desc: '投稿天数' }
       ],
       halfLife: '约 20.79 天'
@@ -24,10 +28,10 @@
       name: 'V3 Radical',
       subtitle: '激进版',
       desc: '更强的时间衰减和互动权重，突出近期热门内容',
-      formula: 'Score = 10000 + ln(P+1) × (1 + 3×I_rate) × e^(-T/10) × 500',
+      formula: '\\text{Score} = 10000 + \\ln(P+1) \\times (1 + 3 \\cdot I_{\\text{rate}}) \\times e^{-T/10} \\times 500',
       vars: [
         { sym: 'P', desc: '播放量' },
-        { sym: 'I_rate', desc: '综合互动率' },
+        { sym: 'I_{\\text{rate}}', desc: '综合互动率' },
         { sym: 'T', desc: '投稿天数' }
       ],
       halfLife: '约 6.93 天'
@@ -36,15 +40,39 @@
       name: 'V3 E SP',
       subtitle: '无时间衰减',
       desc: '去掉时间因子，基于长期累计数据评估视频影响力',
-      formula: 'Score = 10000 + ln(P+1) × (1 + 0.3×ln(C+1)) × (1 + 1.5×I_rate) × 800',
+      formula: '\\text{Score} = 10000 + \\ln(P+1) \\times (1 + 0.3 \\cdot \\ln(C+1)) \\times (1 + 1.5 \\cdot I_{\\text{rate}}) \\times 800',
       vars: [
         { sym: 'P', desc: '播放量' },
         { sym: 'C', desc: '投币数' },
-        { sym: 'I_rate', desc: '综合互动率' }
+        { sym: 'I_{\\text{rate}}', desc: '综合互动率' }
       ],
       halfLife: '无衰减'
     }
   ];
+
+  function renderFormulas() {
+    if (typeof katex === 'undefined') return;
+    document.querySelectorAll('.katex-formula').forEach(el => {
+      try {
+        katex.render(el.dataset.formula, el, { displayMode: true, throwOnError: false });
+      } catch {}
+    });
+    document.querySelectorAll('.katex-var').forEach(el => {
+      try {
+        katex.render(el.dataset.formula, el, { displayMode: false, throwOnError: false });
+      } catch {}
+    });
+  }
+
+  onMount(() => {
+    const check = setInterval(() => {
+      if (typeof katex !== 'undefined') {
+        clearInterval(check);
+        renderFormulas();
+      }
+    }, 100);
+    return () => clearInterval(check);
+  });
 </script>
 
 <section class="about">
@@ -95,11 +123,13 @@
           {#if formulasOpen[i]}
             <div class="algo-body">
               <p class="algo-desc">{algo.desc}</p>
-              <pre class="formula">{algo.formula}</pre>
+              <div class="formula-box">
+                <div class="katex-formula" data-formula={algo.formula}></div>
+              </div>
               <div class="vars-grid">
                 {#each algo.vars as v}
                   <div class="var-item">
-                    <span class="var-sym">{v.sym}</span>
+                    <span class="katex-var" data-formula={v.sym}></span>
                     <span class="var-desc">{v.desc}</span>
                   </div>
                 {/each}
@@ -120,7 +150,7 @@
   <div class="links-row">
     <a href="https://github.com/moehans-official/BiliVBoard" target="_blank" rel="noopener" class="link-card">
       <div class="link-icon github">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 2.183-.322 1.176 0 2.37.302 2.37.302 1.315.302 1.58 1.62 1.58 1.62 1.005 2.72 2.62 1.95 3.26 1.49.093-.725.395-1.95.715-2.405-2.51-.285-5.155-1.255-5.155-5.585 0-1.23.44-2.235 1.155-3.025-.115-.285-.5-1.435.11-2.99 0 0 .88-.28 2.88-2.88 1.365-.38 2.85-.38 4.215 0 1.995 2.6 2.865 2.88 2.865 2.88.615 1.555.225 2.705.11 2.99.72.79 1.155 1.795 1.155 3.025 0 4.34-2.65 5.3-5.16 5.58.405.35.765 1.045.765 2.11 0 1.525-.015 2.755-.015 3.13 0 .32.225.695.825.577C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
       </div>
       <div class="link-text">
         <span class="link-title">GitHub</span>
@@ -348,16 +378,18 @@
     margin: 0 0 16px 0;
   }
 
-  .formula {
+  .formula-box {
     background: #f5f5f7;
-    padding: 14px 16px;
+    padding: 16px 20px;
     border-radius: 10px;
-    font-family: 'SF Mono', 'Fira Code', monospace;
-    font-size: 0.8125rem;
-    color: #1a1a2e;
-    line-height: 1.6;
     overflow-x: auto;
     margin: 0 0 16px 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  .formula-box :global(.katex) {
+    font-size: 1rem;
   }
 
   .vars-grid {
@@ -377,14 +409,8 @@
     border: 1px solid #f0f0f5;
   }
 
-  .var-sym {
-    color: #1a1a2e;
-    font-family: 'SF Mono', 'Fira Code', monospace;
-    font-size: 0.75rem;
-    font-weight: 700;
-    background: #f0f0f5;
-    padding: 2px 6px;
-    border-radius: 4px;
+  .var-item :global(.katex) {
+    font-size: 0.875rem;
   }
 
   .var-desc {
@@ -561,9 +587,12 @@
       padding: 0 16px 16px;
     }
 
-    .formula {
-      font-size: 0.75rem;
+    .formula-box {
       padding: 12px;
+    }
+
+    .formula-box :global(.katex) {
+      font-size: 0.875rem;
     }
 
     .links-row {
