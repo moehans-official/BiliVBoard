@@ -3,7 +3,19 @@ import os
 from contextlib import contextmanager
 from typing import Optional
 
-DB_PATH = os.environ.get('DB_PATH', os.path.join(os.path.dirname(__file__), '..', 'DataCollector', 'bilibili_video_data.db'))
+CHARTS_DIR = os.path.join(os.path.dirname(__file__), '..', 'data', 'charts')
+
+
+def get_latest_chart_db():
+    if not os.path.exists(CHARTS_DIR):
+        return None
+    charts = sorted([f for f in os.listdir(CHARTS_DIR) if f.startswith('chart_') and f.endswith('.db')])
+    if not charts:
+        return None
+    return os.path.join(CHARTS_DIR, charts[-1])
+
+
+DB_PATH = get_latest_chart_db() or os.path.join(os.path.dirname(__file__), '..', 'DataCollector', 'bilibili_video_data.db')
 
 
 @contextmanager
@@ -20,7 +32,7 @@ def get_rankings(limit: int = 20, offset: int = 0) -> list[dict]:
     with get_db() as conn:
         rows = conn.execute('''
             SELECT rank, bvid, title, name, view, danmaku, reply, favorite,
-                   coin, share, like_count, score, cover_url, cover_path, bilibili_url
+                   coin, share, like_count, score, cover_url, bilibili_url
             FROM videos
             ORDER BY rank ASC
             LIMIT ? OFFSET ?
@@ -31,8 +43,8 @@ def get_rankings(limit: int = 20, offset: int = 0) -> list[dict]:
 def get_video_detail(bvid: str) -> Optional[dict]:
     with get_db() as conn:
         row = conn.execute('''
-            SELECT rank, bvid, title, pubdate, mid, name, view, danmaku, reply,
-                   favorite, coin, share, like_count, score, cover_url, cover_path, bilibili_url
+            SELECT rank, bvid, title, pubdate, name, view, danmaku, reply,
+                   favorite, coin, share, like_count, score, cover_url, bilibili_url
             FROM videos WHERE bvid = ?
         ''', (bvid,)).fetchone()
         return dict(row) if row else None
@@ -40,11 +52,26 @@ def get_video_detail(bvid: str) -> Optional[dict]:
 
 def get_period_info() -> Optional[dict]:
     with get_db() as conn:
-        row = conn.execute('''
-            SELECT id, formula, total_videos, created_at
-            FROM periods ORDER BY id DESC LIMIT 1
-        ''').fetchone()
-        return dict(row) if row else None
+        try:
+            row = conn.execute('''
+                SELECT key, value FROM meta
+            ''').fetchall()
+            if row:
+                meta = {r['key']: r['value'] for r in row}
+                return {
+                    'formula': meta.get('formula', 'unknown'),
+                    'total_videos': conn.execute('SELECT COUNT(*) FROM videos').fetchone()[0],
+                }
+        except:
+            pass
+        try:
+            row = conn.execute('''
+                SELECT id, formula, total_videos, created_at
+                FROM periods ORDER BY id DESC LIMIT 1
+            ''').fetchone()
+            return dict(row) if row else None
+        except:
+            return None
 
 
 def get_total_count() -> int:

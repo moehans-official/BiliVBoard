@@ -187,6 +187,7 @@ async def collect_full(chart_id, formula, limit):
         c = conn.cursor()
         for i, v in enumerate(sorted_results[:1000], 1):
             bilibili_url = f"https://www.bilibili.com/video/{v['bvid']}"
+            like_count = v.get('like_count', v.get('like', 0))
             c.execute('''
                 INSERT OR REPLACE INTO videos (rank, bvid, title, name, view, danmaku,
                     reply, favorite, coin, share, like_count, score, cover_url,
@@ -195,7 +196,7 @@ async def collect_full(chart_id, formula, limit):
             ''', (i, v['bvid'], v['title'], v['name'],
                   v.get('view', 0), v.get('danmaku', 0), v.get('reply', 0),
                   v.get('favorite', 0), v.get('coin', 0), v.get('share', 0),
-                  v.get('like_count', 0), v['score'], v.get('cover_url', ''),
+                  like_count, v['score'], v.get('cover_url', ''),
                   bilibili_url, v.get('pubdate', '')))
         conn.commit()
         conn.close()

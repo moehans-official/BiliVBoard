@@ -118,13 +118,14 @@ def update_cache_from_chart(chart_id: int, videos: list[dict]):
     conn = sqlite3.connect(cache_path)
     c = conn.cursor()
 
-    for v in videos:
+    for i, v in enumerate(videos):
+        rank = i + 1
         bvid = v['bvid']
         existing = c.execute('SELECT best_rank, times_in_top20 FROM cache WHERE bvid = ?', (bvid,)).fetchone()
 
         if existing:
-            best_rank = min(existing[0] or 999, v['rank'])
-            times = existing[1] + (1 if v['rank'] <= 20 else 0)
+            best_rank = min(existing[0] or 999, rank)
+            times = existing[1] + (1 if rank <= 20 else 0)
             c.execute('''
                 UPDATE cache SET title=?, name=?, cover_url=?,
                     best_rank=?, best_score=MAX(best_score, ?),
@@ -133,19 +134,19 @@ def update_cache_from_chart(chart_id: int, videos: list[dict]):
                     danmaku=?, reply=?, share=?, updated_at=CURRENT_TIMESTAMP
                 WHERE bvid=?
             ''', (v['title'], v['name'], v.get('cover_url', ''),
-                  best_rank, v['score'], times, chart_id, v['rank'],
+                  best_rank, v['score'], times, chart_id, rank,
                   v.get('view', 0), v.get('like_count', 0), v.get('coin', 0),
                   v.get('favorite', 0), v.get('danmaku', 0), v.get('reply', 0),
                   v.get('share', 0), bvid))
         else:
-            times = 1 if v['rank'] <= 20 else 0
+            times = 1 if rank <= 20 else 0
             c.execute('''
                 INSERT INTO cache (bvid, title, name, cover_url, best_rank,
                     best_score, times_in_top20, last_chart_id, last_rank,
                     view, like_count, coin, favorite, danmaku, reply, share)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', (bvid, v['title'], v['name'], v.get('cover_url', ''),
-                  v['rank'], v['score'], times, chart_id, v['rank'],
+                  rank, v['score'], times, chart_id, rank,
                   v.get('view', 0), v.get('like_count', 0), v.get('coin', 0),
                   v.get('favorite', 0), v.get('danmaku', 0), v.get('reply', 0),
                   v.get('share', 0)))
