@@ -61,22 +61,28 @@ def parse_nomination(nom_id: int):
     try:
         import httpx
         url = f'https://api.bilibili.com/x/web-interface/view?bvid={bvid}'
-        resp = httpx.get(url, timeout=10)
-        data = resp.json()['data']
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Referer': 'https://www.bilibili.com/'
+        }
+        resp = httpx.get(url, headers=headers, timeout=10)
+        result = resp.json()
+        if result.get('code') != 0:
+            print(f'parse failed {bvid}: API error {result.get("message")}')
+            return None
+        data = result['data']
         stat = data['stat']
 
         conn.execute('''
             UPDATE nominations SET
                 title = ?, name = ?, cover_url = ?,
                 score = 0, view = ?, like_count = ?,
-                coin = ?, favorite = ?, danmaku = ?,
-                reply = ?, share = ?
+                coin = ?, favorite = ?
             WHERE id = ?
         ''', (
             data['title'], data['owner']['name'], data.get('pic', ''),
             stat['view'], stat['like'], stat['coin'],
-            stat['favorite'], stat['danmaku'], stat['reply'],
-            stat['share'], nom_id
+            stat['favorite'], nom_id
         ))
         conn.commit()
     except Exception as e:
