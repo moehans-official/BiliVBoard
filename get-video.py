@@ -11,7 +11,7 @@ OUTPUT_DIR = os.path.join(os.path.dirname(__file__), 'output')
 TOP_N = 20
 FFMPEG_PATH = 'ffmpeg'
 
-SESSDATA = ''
+SESSDATA = '27e6c288%2C1794397212%2Cf0dc9%2A52CjDb4P1IY9jfPdMOXSrrbGuFsQgqN9lOHbkL_uL-xbZR0E_9dMjS1FX4_Xf8LHzYRpASVkwtOEh4LWtjLW14MTJIdUM3V18xVUtfalpmR0ptdDRjWWgxaVFVcFJsa2NLSG0xbVU1R1RvTG80ZGx6QlpjU0o5UWNUTEVHdXNkemd0SXhDZnlxV0FnIIEC'
 
 
 def get_latest_chart_db():
