@@ -25,3 +25,10 @@ crawl_songs.py
 
 # Logs
 *.log
+
+# Build output
+frontend/bilivboard-frontend/public/build/
+
+# Project files
+.monkeycode/
+report.tar.gz
