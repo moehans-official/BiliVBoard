@@ -1,12 +1,18 @@
 <script>
+  import { onMount } from 'svelte';
   import AdminPanel from '$lib/components/AdminPanel.svelte';
 
   let password = $state('');
   let authenticated = $state(false);
   let error = $state('');
-  let checking = $state(false);
 
   const ADMIN_PASSWORD = 'bilivboard2024';
+
+  onMount(() => {
+    if (sessionStorage.getItem('admin_auth') === '1') {
+      authenticated = true;
+    }
+  });
 
   function login() {
     if (password === ADMIN_PASSWORD) {
@@ -18,14 +24,6 @@
       password = '';
     }
   }
-
-  function checkSession() {
-    if (sessionStorage.getItem('admin_auth') === '1') {
-      authenticated = true;
-    }
-  }
-
-  checkSession();
 </script>
 
 <svelte:head>
