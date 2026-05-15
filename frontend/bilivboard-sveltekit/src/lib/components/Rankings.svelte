@@ -114,15 +114,13 @@
       {#each rankings as item}
         <div class="card" class:top3={item.rank <= 3} onclick={() => openDetail(item)}>
           <div class="cover-wrapper">
-            {#if item.cover_path || item.cover_url}
-              <img
-                src={item.cover_path || item.cover_url}
-                alt={item.title}
-                class="cover"
-                loading="lazy"
-                onerror={(e) => e.target.style.display = 'none'}
-              />
-            {/if}
+            <img
+              src={item.cover_url}
+              alt={item.title}
+              class="cover"
+              loading="lazy"
+              onerror={(e) => e.target.style.display = 'none'}
+            />
             <div class="cover-overlay"></div>
             <div class="rank-badge {getRankClass(item.rank)}">
               <span class="rank-num">#{item.rank}</span>
@@ -169,10 +167,9 @@
       </button>
       <div class="modal-cover-wrapper">
         <img
-          src={selectedItem.cover_path || selectedItem.cover_url}
+          src={selectedItem.cover_url}
           alt={selectedItem.title}
           class="modal-cover"
-          onerror={(e) => e.target.src = selectedItem.cover_url}
         />
         <div class="modal-score">
           <span class="score-label">评分</span>

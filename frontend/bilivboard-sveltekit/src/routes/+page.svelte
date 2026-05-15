@@ -2,6 +2,7 @@
   import Rankings from '$lib/components/Rankings.svelte';
   import Nominations from '$lib/components/Nominations.svelte';
   import About from '$lib/components/About.svelte';
+  import Announcements from '$lib/components/Announcements.svelte';
 
   let activeTab = $state('rankings');
 
@@ -41,6 +42,7 @@
 </div>
 
 {#if activeTab === 'rankings'}
+  <Announcements />
   <Rankings />
 {:else if activeTab === 'nominations'}
   <Nominations />
