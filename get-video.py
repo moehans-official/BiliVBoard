@@ -4,12 +4,14 @@ import sqlite3
 import sys
 from pathlib import Path
 
-from bilibili_api import video, HEADERS, get_client
+from bilibili_api import video, Credential, HEADERS, get_client
 
 CHARTS_DIR = os.path.join(os.path.dirname(__file__), 'data', 'charts')
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), 'output')
 TOP_N = 20
 FFMPEG_PATH = 'ffmpeg'
+
+SESSDATA = ''
 
 
 def get_latest_chart_db():
@@ -51,7 +53,7 @@ async def download_stream(url: str, out: str, intro: str):
     print()
 
 
-async def download_video(bvid: str, rank: int, output_dir: str) -> bool:
+async def download_video(bvid: str, rank: int, output_dir: str, credential: Credential = None) -> bool:
     filename = f'#{rank}_{bvid}.mp4'
     filepath = os.path.join(output_dir, filename)
 
@@ -59,7 +61,7 @@ async def download_video(bvid: str, rank: int, output_dir: str) -> bool:
         print(f'  [SKIP] Already exists: {filename}')
         return True
 
-    v = video.Video(bvid=bvid)
+    v = video.Video(bvid=bvid, credential=credential)
 
     try:
         url_data = await v.get_download_url(page_index=0)
@@ -68,13 +70,24 @@ async def download_video(bvid: str, rank: int, output_dir: str) -> bool:
         return False
 
     detecter = video.VideoDownloadURLDataDetecter(data=url_data)
-    streams = detecter.detect_best_streams()
+    streams = detecter.detect_best_streams(
+        video_max_quality=video.VideoQuality._1080P,
+        no_dolby_video=True,
+        no_dolby_audio=True,
+        no_hdr=True,
+        no_hires=True,
+    )
 
     video_temp = os.path.join(output_dir, f'_video_{bvid}.m4s')
     audio_temp = os.path.join(output_dir, f'_audio_{bvid}.m4s')
 
     try:
         if detecter.check_video_and_audio_stream():
+            if streams[0] is None or streams[1] is None:
+                print(f'  [FAIL] No suitable stream found')
+                return False
+
+            print(f'  Quality: {streams[0].video_quality}')
             await download_stream(streams[0].url, video_temp, 'Video')
             await download_stream(streams[1].url, audio_temp, 'Audio')
 
@@ -98,7 +111,8 @@ async def download_video(bvid: str, rank: int, output_dir: str) -> bool:
                     os.remove(f)
 
             if proc.returncode == 0 and os.path.exists(filepath):
-                print(f'  [OK] {filename}')
+                size_mb = os.path.getsize(filepath) / 1024 / 1024
+                print(f'  [OK] {filename} ({size_mb:.1f} MB)')
                 return True
             else:
                 print(f'  [FAIL] FFmpeg merge failed')
@@ -119,7 +133,8 @@ async def download_video(bvid: str, rank: int, output_dir: str) -> bool:
                 os.remove(flv_temp)
 
             if proc.returncode == 0 and os.path.exists(filepath):
-                print(f'  [OK] {filename}')
+                size_mb = os.path.getsize(filepath) / 1024 / 1024
+                print(f'  [OK] {filename} ({size_mb:.1f} MB)')
                 return True
             else:
                 print(f'  [FAIL] FLV conversion failed')
@@ -146,8 +161,16 @@ async def main():
         print('No videos found in chart database')
         sys.exit(1)
 
-    print(f'Found {len(videos)} videos to download\n')
+    print(f'Found {len(videos)} videos to download')
 
+    credential = None
+    if SESSDATA:
+        credential = Credential(sessdata=SESSDATA)
+        print(f'Using SESSDATA: {SESSDATA[:10]}...')
+    else:
+        print('Warning: No SESSDATA provided, quality limited to 480P')
+
+    print()
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     success = 0
@@ -160,7 +183,7 @@ async def main():
         print(f'[{rank}/{len(videos)}] {title}')
         print(f'  BVID: {bvid}')
 
-        if await download_video(bvid, rank, OUTPUT_DIR):
+        if await download_video(bvid, rank, OUTPUT_DIR, credential):
             success += 1
         else:
             failed += 1
