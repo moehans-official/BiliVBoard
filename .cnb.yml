@@ -1,0 +1,27 @@
+main:
+  push:
+    - runner:
+        cpus: 16
+      docker:
+        image: python:3.11
+      stages:
+        - name: Install dependencies
+          script: |
+            apt-get update && apt-get install -y ffmpeg
+            pip install pillow moviepy requests
+
+        - name: Download videos from LFS
+          script: |
+            git lfs pull
+
+        - name: Generate video
+          script: |
+            python workflow.py
+
+        - name: Upload output
+          script: |
+            git config user.email "ci@cnb.cool"
+            git config user.name "CNB CI"
+            git add output_video/
+            git commit -m "ci: auto generate TOP20 video [skip ci]" || true
+            git push origin main
